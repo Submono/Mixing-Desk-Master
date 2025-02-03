@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Mixing Desk Master: The Interactive Live Sound Challenge</title>
-  <!-- Include html2canvas from CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5sI+H6N6fju5K0lNys3X/sd4R1DF3uJp7Op71+NPlJp6XvHLEi50Tcl0QUj5fykkZAfOUnxx+QouBy6jr9Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
     /* Basic Page Styles */
     body {
@@ -126,7 +124,7 @@
     <p>An Interactive Live Sound Challenge on Audio Mixing Concepts</p>
   </header>
   
-  <!-- The main container that we will capture in our screenshot -->
+  <!-- Main container -->
   <div class="container" id="mainContainer">
   
     <!-- Intro Screen -->
@@ -338,7 +336,6 @@
       <p>You have completed the Mixing Desk Master Challenge.</p>
       <div class="nav-buttons">
         <button class="button" onclick="restartGame()">Restart Game</button>
-        <button class="button" onclick="downloadScreenshot()">Download Screenshot</button>
       </div>
     </div>
   </div>
@@ -547,25 +544,6 @@
     }
     function completeGame() {
       showLevel(6);
-    }
-    
-    // ---------------- Download Screenshot Function ----------------
-    function downloadScreenshot() {
-      // Use html2canvas to capture the element with ID "mainContainer"
-      html2canvas(document.getElementById('mainContainer')).then(canvas => {
-        // Convert the canvas to a data URL with PNG MIME type.
-        const dataURL = canvas.toDataURL("image/png");
-        // Create a temporary link element
-        const link = document.createElement('a');
-        link.download = 'MixingDeskMaster_Screenshot.png';
-        link.href = dataURL;
-        // Append the link to the document, trigger a click, and then remove it
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }).catch(error => {
-        console.error("Error capturing screenshot:", error);
-      });
     }
   </script>
 </body>
