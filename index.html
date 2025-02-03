@@ -126,7 +126,9 @@
     <p>An Interactive Live Sound Challenge on Audio Mixing Concepts</p>
   </header>
   
+  <!-- The main container that we will capture in our screenshot -->
   <div class="container" id="mainContainer">
+  
     <!-- Intro Screen -->
     <div id="intro" class="level active">
       <h2>Welcome!</h2>
@@ -549,14 +551,21 @@
     
     // ---------------- Download Screenshot Function ----------------
     function downloadScreenshot() {
-      // Use html2canvas to capture the main container
+      // Use html2canvas to capture the element with ID "mainContainer"
       html2canvas(document.getElementById('mainContainer')).then(canvas => {
-        // Create a temporary link to trigger download
-        let link = document.createElement('a');
+        // Convert the canvas to a data URL with PNG MIME type.
+        const dataURL = canvas.toDataURL("image/png");
+        // Create a temporary link element
+        const link = document.createElement('a');
         link.download = 'MixingDeskMaster_Screenshot.png';
-        link.href = canvas.toDataURL();
+        link.href = dataURL;
+        // Append the link to the document, trigger a click, and then remove it
+        document.body.appendChild(link);
         link.click();
-      }).catch(e => console.error("Error capturing screenshot:", e));
+        document.body.removeChild(link);
+      }).catch(error => {
+        console.error("Error capturing screenshot:", error);
+      });
     }
   </script>
 </body>
