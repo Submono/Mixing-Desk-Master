@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mixing Desk Master: The Interactive Live Sound Challenge</title>
+  <!-- Include html2canvas from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5sI+H6N6fju5K0lNys3X/sd4R1DF3uJp7Op71+NPlJp6XvHLEi50Tcl0QUj5fykkZAfOUnxx+QouBy6jr9Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    /* Basic Page Styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    header {
+      background: url('https://via.placeholder.com/900x200?text=Mixing+Desk+Master') no-repeat center center;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      padding: 60px 20px;
+      margin-bottom: 20px;
+    }
+    h1, h2, h3 {
+      margin: 10px 0;
+    }
+    .level {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .active {
+      display: block;
+    }
+    .button {
+      background-color: #0073e6;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .button:hover {
+      background-color: #005bb5;
+    }
+    .nav-buttons {
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    /* Level 1 Scenario Styling (Images Removed) */
+    .scenario {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .scenario.active {
+      display: block;
+    }
+    .options {
+      text-align: center;
+      margin: 15px 0;
+    }
+    .options .button {
+      margin: 5px;
+    }
+    .feedback {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    
+    /* Level 3, 4, 5 Styles (unchanged) */
+    .slider-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+    input[type=range] {
+      width: 80%;
+      margin: 10px 0;
+    }
+    #simulationOutput {
+      font-size: 18px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    #audioButton {
+      display: block;
+      margin: 10px auto;
+      background-color: #28a745;
+    }
+    .meter {
+      position: relative;
+      width: 300px;
+      height: 30px;
+      border: 1px solid #333;
+      border-radius: 15px;
+      background: #ddd;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      width: 50%; /* default 50% */
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mixing Desk Master</h1>
+    <p>An Interactive Live Sound Challenge on Audio Mixing Concepts</p>
+  </header>
+  
+  <div class="container" id="mainContainer">
+    <!-- Intro Screen -->
+    <div id="intro" class="level active">
+      <h2>Welcome!</h2>
+      <p>Welcome to Mixing Desk Master. In this game, you'll complete 5 levels covering key concepts of live sound mixing. Click "Start Game" to begin your journey into live sound.</p>
+      <div class="nav-buttons">
+        <button class="button" onclick="showLevel(1)">Start Game</button>
+      </div>
+    </div>
+    
+    <!-- Level 1: Live Sound Scenarios (No Images) -->
+    <div id="level1" class="level">
+      <h2>Level 1: Live Sound Scenarios</h2>
+      <p>For each scenario, select the appropriate mixing desk input or output.</p>
+      
+      <!-- Scenario 1: Stage Vocal Reinforcement -->
+      <div id="scenario1" class="scenario active">
+        <h3>Scenario 1: Stage Vocal Reinforcement</h3>
+        <p>You are setting up a live show and need to capture the lead vocalist's performance on stage. Which input should be used for the vocal microphone?</p>
+        <div class="options">
+          <button class="button" onclick="checkAnswer(1, 'Microphone Input')">Microphone Input</button>
+          <button class="button" onclick="checkAnswer(1, 'Line Input')">Line Input</button>
+          <button class="button" onclick="checkAnswer(1, 'Aux Output')">Aux Output</button>
+          <button class="button" onclick="checkAnswer(1, 'Main Output')">Main Output</button>
+        </div>
+        <div class="feedback" id="feedback1"></div>
+        <div class="nav-buttons">
+          <button class="button" id="next1" onclick="showScenario(2)" disabled>Next Scenario</button>
+        </div>
+      </div>
+      
+      <!-- Scenario 2: FX Return -->
+      <div id="scenario2" class="scenario">
+        <h3>Scenario 2: FX Return</h3>
+        <p>During a live performance, an external effects processor adds delay to the lead vocal. The processed (delayed) signal returns to the mixing desk. Which input should receive this signal?</p>
+        <div class="options">
+          <button class="button" onclick="checkAnswer(2, 'Microphone Input')">Microphone Input</button>
+          <button class="button" onclick="checkAnswer(2, 'Line Input')">Line Input</button>
+          <button class="button" onclick="checkAnswer(2, 'Aux Output')">Aux Output</button>
+          <button class="button" onclick="checkAnswer(2, 'Main Output')">Main Output</button>
+        </div>
+        <div class="feedback" id="feedback2"></div>
+        <div class="nav-buttons">
+          <button class="button" onclick="showScenario(1)">Previous Scenario</button>
+          <button class="button" id="next2" onclick="showScenario(3)" disabled>Next Scenario</button>
+        </div>
+      </div>
+      
+      <!-- Scenario 3: Stage Monitor Mix -->
+      <div id="scenario3" class="scenario">
+        <h3>Scenario 3: Stage Monitor Mix</h3>
+        <p>You need to send a separate mix to the on‑stage monitors for a guitarist. Which output should be used to create the monitor mix?</p>
+        <div class="options">
+          <button class="button" onclick="checkAnswer(3, 'Microphone Input')">Microphone Input</button>
+          <button class="button" onclick="checkAnswer(3, 'Line Input')">Line Input</button>
+          <button class="button" onclick="checkAnswer(3, 'Aux Output')">Aux Output</button>
+          <button class="button" onclick="checkAnswer(3, 'Main Output')">Main Output</button>
+        </div>
+        <div class="feedback" id="feedback3"></div>
+        <div class="nav-buttons">
+          <button class="button" onclick="showScenario(2)">Previous Scenario</button>
+          <button class="button" id="next3" onclick="showScenario(4)" disabled>Next Scenario</button>
+        </div>
+      </div>
+      
+      <!-- Scenario 4: Front‑of‑House Mix -->
+      <div id="scenario4" class="scenario">
+        <h3>Scenario 4: Front‑of‑House Mix</h3>
+        <p>You are feeding the main PA system for a live event. Which output should be used to deliver the full mix to the audience?</p>
+        <div class="options">
+          <button class="button" onclick="checkAnswer(4, 'Microphone Input')">Microphone Input</button>
+          <button class="button" onclick="checkAnswer(4, 'Line Input')">Line Input</button>
+          <button class="button" onclick="checkAnswer(4, 'Aux Output')">Aux Output</button>
+          <button class="button" onclick="checkAnswer(4, 'Main Output')">Main Output</button>
+        </div>
+        <div class="feedback" id="feedback4"></div>
+        <div class="nav-buttons">
+          <button class="button" onclick="showScenario(3)">Previous Scenario</button>
+          <button class="button" id="next4" onclick="showLevel(2)" disabled>Continue to Level 2</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Level 2: Channel Strip Signal Flow (Ordering) -->
+    <div id="level2" class="level">
+      <h2>Level 2: Channel Strip Signal Flow</h2>
+      <p>Arrange the components in the correct order (from first in signal flow to last).</p>
+      <ul id="orderList">
+        <li data-name="Preamplifier">
+          <span>Preamplifier</span>
+          <span>
+            <button onclick="moveUp(this)">↑</button>
+            <button onclick="moveDown(this)">↓</button>
+          </span>
+        </li>
+        <li data-name="Insert Point">
+          <span>Insert Point</span>
+          <span>
+            <button onclick="moveUp(this)">↑</button>
+            <button onclick="moveDown(this)">↓</button>
+          </span>
+        </li>
+        <li data-name="Equalizer">
+          <span>Equalizer</span>
+          <span>
+            <button onclick="moveUp(this)">↑</button>
+            <button onclick="moveDown(this)">↓</button>
+          </span>
+        </li>
+        <li data-name="Fader">
+          <span>Fader</span>
+          <span>
+            <button onclick="moveUp(this)">↑</button>
+            <button onclick="moveDown(this)">↓</button>
+          </span>
+        </li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="button" onclick="checkLevel2()">Check Order</button>
+      </div>
+      <p id="orderFeedback" style="text-align: center; font-weight: bold;"></p>
+      <div class="nav-buttons">
+        <button class="button" onclick="showLevel(1)">Previous Level</button>
+        <button class="button" onclick="showLevel(3)">Next Level</button>
+      </div>
+    </div>
+    
+    <!-- Level 3: Channel Strip Features & Audio Simulation -->
+    <div id="level3" class="level">
+      <h2>Level 3: Channel Strip Features</h2>
+      <p>Adjust the EQ and Dynamics settings to see (and hear) how they affect the channel strip simulation.</p>
+      <!-- Audio Simulation Activation -->
+      <button id="audioButton" class="button" onclick="startAudioSimulation()">Activate Audio Simulation</button>
+      <!-- Expanded EQ Controls -->
+      <div class="slider-container">
+        <label for="eqLow">Low Frequency EQ (dB): <span id="eqLowValue">0</span></label><br>
+        <input type="range" id="eqLow" min="-12" max="12" value="0" oninput="updateLowEQ(this.value)">
+      </div>
+      <div class="slider-container">
+        <label for="eqMid">Mid Frequency EQ (dB): <span id="eqMidValue">0</span></label><br>
+        <input type="range" id="eqMid" min="-12" max="12" value="0" oninput="updateMidEQ(this.value)">
+      </div>
+      <div class="slider-container">
+        <label for="eqHigh">High Frequency EQ (dB): <span id="eqHighValue">0</span></label><br>
+        <input type="range" id="eqHigh" min="-12" max="12" value="0" oninput="updateHighEQ(this.value)">
+      </div>
+      <div class="slider-container">
+        <label for="dynSlider">Compressor Threshold (dB): <span id="dynValue">-30</span></label><br>
+        <input type="range" id="dynSlider" min="-60" max="0" value="-30" oninput="updateDynamics(this.value)">
+      </div>
+      <p id="simulationOutput">Sound Simulation: Neutral</p>
+      <div class="nav-buttons">
+        <button class="button" onclick="showLevel(2)">Previous Level</button>
+        <!-- Leaving Level 3 stops audio -->
+        <button class="button" onclick="showLevel(4)">Next Level</button>
+      </div>
+    </div>
+    
+    <!-- Level 4: Routing (Multiple Choice) -->
+    <div id="level4" class="level">
+      <h2>Level 4: Routing</h2>
+      <p>Scenario: You want to add reverb to a live vocal without affecting the dry signal. Which routing method should you use?</p>
+      <form id="routingForm">
+        <div style="margin-bottom: 10px;">
+          <input type="radio" name="routing" value="A" id="optionA">
+          <label for="optionA">Send vocals directly to the main output with reverb applied on the channel.</label>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="radio" name="routing" value="B" id="optionB">
+          <label for="optionB">Use an auxiliary send to route vocals to a dedicated reverb bus while keeping the dry signal separate.</label>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="radio" name="routing" value="C" id="optionC">
+          <label for="optionC">Route vocals to an effects return then to the main output.</label>
+        </div>
+      </form>
+      <div class="nav-buttons">
+        <button class="button" onclick="checkLevel4()">Submit Answer</button>
+      </div>
+      <p id="routingFeedback" style="text-align: center; font-weight: bold;"></p>
+      <div class="nav-buttons">
+        <button class="button" onclick="showLevel(3)">Previous Level</button>
+        <button class="button" onclick="showLevel(5)">Next Level</button>
+      </div>
+    </div>
+    
+    <!-- Level 5: Metering (Interactive Slider & Visual Meter) -->
+    <div id="level5" class="level">
+      <h2>Level 5: Metering</h2>
+      <p>Adjust the channel level to observe the metering display.</p>
+      <div class="slider-container">
+        <label for="meterSlider">Channel Level:</label><br>
+        <input type="range" id="meterSlider" min="0" max="100" value="50" oninput="updateMeter(this.value)">
+      </div>
+      <div class="meter">
+        <div id="meterFill" class="meter-fill"></div>
+      </div>
+      <p id="meterDisplay" style="text-align: center;">Meter: 50%</p>
+      <div class="nav-buttons">
+        <button class="button" onclick="showLevel(4)">Previous Level</button>
+        <button class="button" onclick="completeGame()">Finish Game</button>
+      </div>
+    </div>
+    
+    <!-- Completion Screen -->
+    <div id="completion" class="level">
+      <h2>Congratulations!</h2>
+      <p>You have completed the Mixing Desk Master Challenge.</p>
+      <div class="nav-buttons">
+        <button class="button" onclick="restartGame()">Restart Game</button>
+        <button class="button" onclick="downloadScreenshot()">Download Screenshot</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ---------------- General Navigation Functions ----------------
+    function showLevel(level) {
+      // If leaving Level 3, stop audio simulation.
+      const currentActive = document.querySelector('.level.active');
+      if (currentActive && currentActive.id === 'level3') {
+        stopAudioSimulation();
+      }
+      const levels = document.querySelectorAll('.level');
+      levels.forEach(lvl => lvl.classList.remove('active'));
+      if (level === 0) {
+        document.getElementById('intro').classList.add('active');
+      } else if (level === 1) {
+        document.getElementById('level1').classList.add('active');
+        // Start at scenario 1 for Level 1.
+        showScenario(1);
+      } else if (level === 2) {
+        document.getElementById('level2').classList.add('active');
+      } else if (level === 3) {
+        document.getElementById('level3').classList.add('active');
+      } else if (level === 4) {
+        document.getElementById('level4').classList.add('active');
+      } else if (level === 5) {
+        document.getElementById('level5').classList.add('active');
+      } else if (level === 6) {
+        document.getElementById('completion').classList.add('active');
+      }
+    }
+    function restartGame() {
+      location.reload();
+    }
+    
+    // ---------------- Level 1: Scenario-Based Functions ----------------
+    // Correct answers for live sound scenarios.
+    const correctAnswers = {
+      1: "Microphone Input",  // Stage Vocal Reinforcement
+      2: "Line Input",        // FX Return scenario now expects "Line Input"
+      3: "Aux Output",        // Stage Monitor Mix
+      4: "Main Output"        // Front‑of‑House Mix
+    };
+    // Show a specific scenario in Level 1.
+    function showScenario(num) {
+      const scenarios = document.querySelectorAll('.scenario');
+      scenarios.forEach(scn => scn.classList.remove('active'));
+      document.getElementById('scenario' + num).classList.add('active');
+    }
+    // Check the answer for a given scenario.
+    function checkAnswer(scenarioNum, answer) {
+      const feedbackEl = document.getElementById("feedback" + scenarioNum);
+      const nextBtn = document.getElementById("next" + scenarioNum);
+      if (answer === correctAnswers[scenarioNum]) {
+        feedbackEl.innerText = "Correct! Click Next to continue.";
+        nextBtn.disabled = false;
+      } else {
+        feedbackEl.innerText = "Incorrect. Try again.";
+        nextBtn.disabled = true;
+      }
+    }
+    
+    // ---------------- Level 2: Ordering Exercise ----------------
+    function moveUp(button) {
+      const li = button.parentElement.parentElement;
+      const prev = li.previousElementSibling;
+      if (prev) {
+        li.parentNode.insertBefore(li, prev);
+      }
+    }
+    function moveDown(button) {
+      const li = button.parentElement.parentElement;
+      const next = li.nextElementSibling;
+      if (next) {
+        li.parentNode.insertBefore(next, li);
+      }
+    }
+    function checkLevel2() {
+      const listItems = document.querySelectorAll('#orderList li');
+      const correctOrder = ["Preamplifier", "Insert Point", "Equalizer", "Fader"];
+      let isCorrect = true;
+      listItems.forEach((item, index) => {
+        if (item.getAttribute('data-name') !== correctOrder[index]) {
+          isCorrect = false;
+        }
+      });
+      const feedback = document.getElementById('orderFeedback');
+      feedback.innerText = isCorrect ? "Correct order! Signal flow is properly arranged." : "The order is incorrect. Please adjust the components.";
+    }
+    
+    // ---------------- Level 3: Audio Simulation & EQ Controls ----------------
+    let audioCtx, source, lowFilter, midFilter, highFilter, compressor, gainNode, audioStarted = false;
+    const audioUrl = "https://raw.githubusercontent.com/Submono/Tokvox/abfeee20882f4da1512ce2a0beef0f7aa7dd4ff6/Tok%20Vox_r1_2025-02-03.mp3";
+    function startAudioSimulation() {
+      if (audioStarted) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      lowFilter = audioCtx.createBiquadFilter();
+      lowFilter.type = 'lowshelf';
+      lowFilter.frequency.value = 250;
+      lowFilter.gain.value = parseFloat(document.getElementById('eqLow').value);
+      
+      midFilter = audioCtx.createBiquadFilter();
+      midFilter.type = 'peaking';
+      midFilter.frequency.value = 1000;
+      midFilter.Q.value = 1;
+      midFilter.gain.value = parseFloat(document.getElementById('eqMid').value);
+      
+      highFilter = audioCtx.createBiquadFilter();
+      highFilter.type = 'highshelf';
+      highFilter.frequency.value = 4000;
+      highFilter.gain.value = parseFloat(document.getElementById('eqHigh').value);
+      
+      compressor = audioCtx.createDynamicsCompressor();
+      compressor.threshold.value = parseFloat(document.getElementById('dynSlider').value);
+      
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.2;
+      
+      fetch(audioUrl)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+        .then(audioBuffer => {
+          source = audioCtx.createBufferSource();
+          source.buffer = audioBuffer;
+          source.loop = true;
+          source.connect(lowFilter);
+          lowFilter.connect(midFilter);
+          midFilter.connect(highFilter);
+          highFilter.connect(compressor);
+          compressor.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          source.start();
+          audioStarted = true;
+          document.getElementById('simulationOutput').innerText = "Sound Simulation: Audio Activated";
+          updateSimulationText();
+        })
+        .catch(e => console.error("Error loading audio file:", e));
+    }
+    function stopAudioSimulation() {
+      if (audioStarted && source) {
+        source.stop();
+        audioStarted = false;
+        console.log("Audio simulation stopped.");
+      }
+    }
+    function updateLowEQ(value) {
+      document.getElementById('eqLowValue').innerText = value;
+      if (lowFilter) {
+        lowFilter.gain.value = parseFloat(value);
+      }
+      updateSimulationText();
+    }
+    function updateMidEQ(value) {
+      document.getElementById('eqMidValue').innerText = value;
+      if (midFilter) {
+        midFilter.gain.value = parseFloat(value);
+      }
+      updateSimulationText();
+    }
+    function updateHighEQ(value) {
+      document.getElementById('eqHighValue').innerText = value;
+      if (highFilter) {
+        highFilter.gain.value = parseFloat(value);
+      }
+      updateSimulationText();
+    }
+    function updateDynamics(value) {
+      document.getElementById('dynValue').innerText = value;
+      if (compressor) {
+        compressor.threshold.value = parseFloat(value);
+      }
+      updateSimulationText();
+    }
+    function updateSimulationText() {
+      const low = document.getElementById('eqLow').value;
+      const mid = document.getElementById('eqMid').value;
+      const high = document.getElementById('eqHigh').value;
+      const comp = document.getElementById('dynSlider').value;
+      document.getElementById('simulationOutput').innerText =
+        "Sound Simulation: Low " + low + " dB, Mid " + mid + " dB, High " + high + " dB; Compressor Threshold: " + comp + " dB";
+    }
+    
+    // ---------------- Level 4: Routing (Multiple Choice) ----------------
+    function checkLevel4() {
+      const form = document.getElementById('routingForm');
+      const selected = form.elements['routing'].value;
+      const feedback = document.getElementById('routingFeedback');
+      feedback.innerText = (selected === "B") ? "Correct! Using an auxiliary send is the best method." : "Incorrect. Please review routing strategies and try again.";
+    }
+    
+    // ---------------- Level 5: Metering Simulation ----------------
+    function updateMeter(value) {
+      document.getElementById('meterDisplay').innerText = "Meter: " + value + "%";
+      document.getElementById('meterFill').style.width = value + "%";
+      let color;
+      if (value < 70) {
+        color = "#00b300"; // Green
+      } else if (value < 100) {
+        color = "#ffa500"; // Orange
+      } else {
+        color = "#ff0000"; // Red at 100%
+      }
+      document.getElementById('meterFill').style.backgroundColor = color;
+    }
+    function completeGame() {
+      showLevel(6);
+    }
+    
+    // ---------------- Download Screenshot Function ----------------
+    function downloadScreenshot() {
+      // Use html2canvas to capture the main container
+      html2canvas(document.getElementById('mainContainer')).then(canvas => {
+        // Create a temporary link to trigger download
+        let link = document.createElement('a');
+        link.download = 'MixingDeskMaster_Screenshot.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      }).catch(e => console.error("Error capturing screenshot:", e));
+    }
+  </script>
+</body>
+</html>
